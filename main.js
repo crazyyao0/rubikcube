@@ -98,14 +98,9 @@ function MyControls(){
 				width: window.innerWidth,
 				height: window.innerHeight
 			};
-
-			var dpr = window.devicePixelRatio || 1
-			x *= dpr
-			y *= dpr
-
 			return vector.set(
 				(2*(x-view.left) - view.width) / view.width,
-				(view.height + 2*(view.top-y)) / view.height
+				(view.height - 2*(y-view.top)) / view.height
 			);
 		}
 
@@ -113,7 +108,6 @@ function MyControls(){
 			var direction = new THREE.Vector2( mouse.x-mouseStart.x, mouse.y-mouseStart.y);
 			if (Math.abs(direction.x) < 0.1 && Math.abs(direction.y) < 0.1)
 				return;
-
 			if (Math.abs(direction.x) > Math.abs(direction.y))
 			{
 				d = direction.x * mouseStart.y;
@@ -130,10 +124,11 @@ function MyControls(){
 		function mousedown( event ) {
 			if (!api.enabled || event.which !== 1 )
 				return;
-
-			if( projector.getIntersection( camera, event.pageX, event.pageY ) === null ){
+			var x = ( event.touches && event.touches[0] || event ).clientX,
+				y = ( event.touches && event.touches[0] || event ).clientY;
+			if( projector.getIntersection( camera, x, y ) === null ){
 				twistonce = false;
-				translateviewcoor(event.pageX, event.pageY, mouseStart);
+				translateviewcoor(x, y, mouseStart);
 				api.domElement.removeEventListener( 'mousedown', mousedown );
 				document.addEventListener( 'mousemove', mousemove );
 				document.addEventListener( 'mouseup', mouseup );
@@ -141,9 +136,11 @@ function MyControls(){
 		}
 
 		function mousemove( event ) {
+			var x = ( event.touches && event.touches[0] || event ).clientX,
+				y = ( event.touches && event.touches[0] || event ).clientY;
 			if ( api.enabled && !twistonce){
 				event.preventDefault();
-				translateviewcoor(event.pageX, event.pageY, mouse);
+				translateviewcoor(x, y, mouse);
 				onmove();
 			}
 		}
@@ -156,9 +153,12 @@ function MyControls(){
 
 
 		function touchstart( event ) {
-			if ( api.enabled && projector.getIntersection( camera, event.touches[0].pageX, event.touches[0].pageY) === null ){
+			var x = ( event.touches && event.touches[0] || event ).clientX,
+				y = ( event.touches && event.touches[0] || event ).clientY;
+
+			if ( api.enabled && projector.getIntersection( camera, x, y) === null ){
 				twistonce = false;
-				translateviewcoor(event.touches[0].pageX, event.touches[0].pageY, mouseStart);
+				translateviewcoor(x, y, mouseStart);
 				api.domElement.removeEventListener( 'touchstart', touchstart);
 				document.addEventListener( 'touchend', touchend );
 				document.addEventListener( 'touchmove', touchmove );
@@ -166,8 +166,10 @@ function MyControls(){
 		}
 
 		function touchmove( event ) {
+			var x = ( event.touches && event.touches[0] || event ).clientX,
+				y = ( event.touches && event.touches[0] || event ).clientY;
 			if ( api.enabled && !twistonce){
-				translateviewcoor(event.touches[0].pageX, event.touches[0].pageY, mouse);
+				translateviewcoor(x, y, mouse);
 				onmove();
 			}
 		}

@@ -59,6 +59,7 @@ table, td, tr {
 }
 .button {
 	margin-top:2px;
+	margin-left:10px;
 }
 .button input{
 	background-color:#333;

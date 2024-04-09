@@ -11,7 +11,9 @@
             <input type="button" value="打乱魔方" id="shuffle" onClick="cube.shuffle()"/>
             <input type="button" value="撤销" id="undo" onClick="cube.undo()"/>
             <input type="button" value="重做" id="redo"  onClick="cube.redo()"/>
-            <input type="button" value="看底面" id="turnX" onmousedown="cube.rotation.x=-Math.PI*0.15", onmouseup="cube.rotation.x=Math.PI*0.15"/>
+            <input type="button" value="看底面" id="turnX" 
+				onmousedown="cube.rotation.x=-Math.PI*0.15", onmouseup="cube.rotation.x=Math.PI*0.15",
+				ontouchstart="cube.rotation.x=-Math.PI*0.15", ontouchend="cube.rotation.x=Math.PI*0.15"	/>
 			<table><tr><th>公式名</th><th>命令串</th></tr>
 			<tr><td>底层角右</td><td>rdR</td><td><input type="button" value="运行" onClick="cube.twist('rdR'.split(''))"></td></tr>
 			<tr><td>底层角左</td><td>FDf</td><td><input type="button" value="运行" onClick="cube.twist('FDf'.split(''))"></td></tr>
