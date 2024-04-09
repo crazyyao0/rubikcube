@@ -156,9 +156,9 @@ function MyControls(){
 
 
 		function touchstart( event ) {
-			if ( api.enabled && projector.getIntersection( camera, event.touches[ 0 ].pageX, event.touches[ 0 ].pageY ) === null ){
+			if ( api.enabled && projector.getIntersection( camera, event.touches[0].pageX, event.touches[0].pageY) === null ){
 				twistonce = false;
-				translateviewcoor(event.pageX, event.pageY, mouseStart);
+				translateviewcoor(event.touches[0].pageX, event.touches[0].pageY, mouseStart);
 				api.domElement.removeEventListener( 'touchstart', touchstart);
 				document.addEventListener( 'touchend', touchend );
 				document.addEventListener( 'touchmove', touchmove );
@@ -167,7 +167,7 @@ function MyControls(){
 
 		function touchmove( event ) {
 			if ( api.enabled && !twistonce){
-				translateviewcoor(event.touches[ 0 ].pageX, event.touches[ 0 ].pageY, mouse);
+				translateviewcoor(event.touches[0].pageX, event.touches[0].pageY, mouse);
 				onmove();
 			}
 		}
