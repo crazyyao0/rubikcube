@@ -5,41 +5,13 @@
 		<link rel="stylesheet" type="text/css" href="cube.css">
 		<link rel="stylesheet" type="text/css" href="base.css">
 		<title>魔方</title>
-        <style>
-            .button {
-                position:absolute;
-                top:0;
-                left:0;
-                margin-top:2px;
-            }
-            .button input{
-                background-color:#333;
-                padding:5px;
-                border:none;
-                color:#fff;
-            }
-        </style>
 	</head>
-	<body class="graydient" >
-		<div id="container" ></div>
-		<div id="fail">
-			<h1>Sorry,</h1>
-			<h2>Cubers broken</h2>
-		</div>
+	<body >
         <div class="button">
             <input type="button" value="打乱魔方" id="shuffle" onClick="cube.shuffle()"/>
             <input type="button" value="撤销" id="undo" onClick="cube.undo()"/>
             <input type="button" value="重做" id="redo"  onClick="cube.redo()"/>
-            <input type="button" value="看顶面" id="turnX" onClick="cube.rotation.x=Math.PI*0.15"/>
-            <input type="button" value="看底面" id="turnx" onClick="cube.rotation.x=-Math.PI*0.15"/>
-            <input type="button" value="左转" id="turnY" onClick="cube.twist('Y')"/>
-            <input type="button" value="右转" id="turny" onClick="cube.twist('y')"/>
-            <input type="button" value="前滚" id="turnx" onClick="cube.twist('x')"/>
-            <input type="button" value="后滚" id="turnX" onClick="cube.twist('X')"/>
-			<br/><span>输入命令：　</span>
-			<input type="text" id="cmd"/>
-			<input type="button" value="启动" id="start" onClick="cube.twist(document.getElementById('cmd').value.split(''))"/>
-			<br/>
+            <input type="button" value="看底面" id="turnX" onmousedown="cube.rotation.x=-Math.PI*0.15", onmouseup="cube.rotation.x=Math.PI*0.15"/>
 			<table><tr><th>公式名</th><th>命令串</th></tr>
 			<tr><td>底层角右</td><td>rdR</td><td><input type="button" value="运行" onClick="cube.twist('rdR'.split(''))"></td></tr>
 			<tr><td>底层角左</td><td>FDf</td><td><input type="button" value="运行" onClick="cube.twist('FDf'.split(''))"></td></tr>
@@ -50,6 +22,11 @@
 			<tr><td>小鱼左</td><td>FUfUFUUf</td><td><input type="button" value="运行" onClick="cube.twist('FUfUFUUf'.split(''))"></td></tr>
 			<tr><td>顶面四角</td><td>LfLBBlFLBBLL</td><td><input type="button" value="运行" onClick="cube.twist('LfLBBlFLBBLL'.split(''))"></td></tr>
 			</table>
+		</div>
+		<div id="container" ></div>
+		<div id="fail">
+			<h1>Sorry,</h1>
+			<h2>Cubers broken</h2>
 		</div>
 		<script charset="utf-8" src="cuber.js"></script>
 		<script charset="utf-8" src="jquery.js"></script>

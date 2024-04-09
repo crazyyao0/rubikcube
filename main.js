@@ -75,35 +75,138 @@
 */
 
 
+function MyControls(){
+
+	return function ( object, camera, domElement ) {
+		var	mouse	 	 = new THREE.Vector2(),
+			mouseStart	 = new THREE.Vector2(),
+			twistonce	 = false;
+			projector = new ERNO.Projector( object, domElement ),
+			api = {
+				enabled: true,
+				domElement: domElement,
+			};
+
+		api.update = function(){
+			return;
+		};
+
+		function translateviewcoor(x, y, vector){
+			var view = api.domElement !== document ? api.domElement.getBoundingClientRect() : {
+				left: 0,
+				top: 0,
+				width: window.innerWidth,
+				height: window.innerHeight
+			};
+
+			var dpr = window.devicePixelRatio || 1
+			x *= dpr
+			y *= dpr
+
+			return vector.set(
+				(2*(x-view.left) - view.width) / view.width,
+				(view.height + 2*(view.top-y)) / view.height
+			);
+		}
+
+		function onmove(direction) {
+			var direction = new THREE.Vector2( mouse.x-mouseStart.x, mouse.y-mouseStart.y);
+			if (Math.abs(direction.x) < 0.1 && Math.abs(direction.y) < 0.1)
+				return;
+
+			if (Math.abs(direction.x) > Math.abs(direction.y))
+			{
+				d = direction.x * mouseStart.y;
+				d = d / Math.abs(d);
+				object.twist(d>0?"Y":"y")
+			}else{
+				d = direction.y * mouseStart.x;
+				d = d / Math.abs(d);
+				object.twist(d>0?"x":"X")
+			}
+			twistonce = true;
+		}
+
+		function mousedown( event ) {
+			if (!api.enabled || event.which !== 1 )
+				return;
+
+			if( projector.getIntersection( camera, event.pageX, event.pageY ) === null ){
+				twistonce = false;
+				translateviewcoor(event.pageX, event.pageY, mouseStart);
+				api.domElement.removeEventListener( 'mousedown', mousedown );
+				document.addEventListener( 'mousemove', mousemove );
+				document.addEventListener( 'mouseup', mouseup );
+			}
+		}
+
+		function mousemove( event ) {
+			if ( api.enabled && !twistonce){
+				event.preventDefault();
+				translateviewcoor(event.pageX, event.pageY, mouse);
+				onmove();
+			}
+		}
+
+		function mouseup( event ) {
+			document.removeEventListener( 'mousemove', mousemove );
+			document.removeEventListener( 'mouseup', mouseup );
+			api.domElement.addEventListener( 'mousedown', mousedown );
+		}
+
+
+		function touchstart( event ) {
+			if ( api.enabled && projector.getIntersection( camera, event.touches[ 0 ].pageX, event.touches[ 0 ].pageY ) === null ){
+				twistonce = false;
+				translateviewcoor(event.pageX, event.pageY, mouseStart);
+				api.domElement.removeEventListener( 'touchstart', touchstart);
+				document.addEventListener( 'touchend', touchend );
+				document.addEventListener( 'touchmove', touchmove );
+			}
+		}
+
+		function touchmove( event ) {
+			if ( api.enabled && !twistonce){
+				translateviewcoor(event.touches[ 0 ].pageX, event.touches[ 0 ].pageY, mouse);
+				onmove();
+			}
+		}
+
+		function touchend( event ) {
+			document.removeEventListener( 'touchend', touchend );
+			document.removeEventListener( 'touchmove', touchmove );
+			api.domElement.addEventListener( 'touchstart', touchstart );
+		}
+
+		api.domElement.addEventListener( 'mousedown', mousedown );
+		api.domElement.addEventListener( 'touchstart', touchstart, {passive: true});
+		return api;
+	};
+
+}
+
 
 
 $(document).ready( function(){ 
-
-
-	var useLockedControls = true,
-		controls = useLockedControls ? ERNO.Locked : ERNO.Freeform;
-
 	var ua = navigator.userAgent,
 		isIe = ua.indexOf('MSIE') > -1 || ua.indexOf('Trident/') > -1;
 
 	window.cube = new ERNO.Cube({
 		hideInvisibleFaces: true,
-		controls: controls,
+		controls: MyControls(),
+		twistDuration: 300,
 		renderer: isIe ? ERNO.renderers.IeCSS3D : null
 	});
 
 	var container = document.getElementById( 'container' );
 	container.appendChild( cube.domElement );
 
+	var fixedOrientation = new THREE.Euler(  Math.PI * 0.15, - Math.PI * 0.15, 0 );
+	cube.object3D.lookAt( cube.camera.position );
+	cube.rotation.x += fixedOrientation.x;
+	cube.rotation.y += fixedOrientation.y;
+	cube.rotation.z += fixedOrientation.z;
 
-
-	if( controls === ERNO.Locked ){
-		var fixedOrientation = new THREE.Euler(  Math.PI * 0.15, - Math.PI * 0.15, 0 );
-		cube.object3D.lookAt( cube.camera.position );
-		cube.rotation.x += fixedOrientation.x;
-		cube.rotation.y += fixedOrientation.y;
-		cube.rotation.z += fixedOrientation.z;
-	}
 
 	
 	// The deviceMotion function provide some subtle mouse based motion
