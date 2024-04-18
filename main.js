@@ -151,6 +151,12 @@ function MyControls(){
 			api.domElement.addEventListener( 'mousedown', mousedown );
 		}
 
+		function clearEventBubble(evt) { 
+			if (evt.stopPropagation) { evt.stopPropagation(); }
+			else { evt.cancelBubble = true; }
+			if (evt.preventDefault) { evt.preventDefault(); }
+			else { evt.returnValue = false; }
+		}
 
 		function touchstart( event ) {
 			var x = ( event.touches && event.touches[0] || event ).clientX,
@@ -163,6 +169,7 @@ function MyControls(){
 				document.addEventListener( 'touchend', touchend );
 				document.addEventListener( 'touchmove', touchmove );
 			}
+			clearEventBubble(event);
 		}
 
 		function touchmove( event ) {
@@ -172,12 +179,14 @@ function MyControls(){
 				translateviewcoor(x, y, mouse);
 				onmove();
 			}
+			clearEventBubble(event);
 		}
 
 		function touchend( event ) {
 			document.removeEventListener( 'touchend', touchend );
 			document.removeEventListener( 'touchmove', touchmove );
 			api.domElement.addEventListener( 'touchstart', touchstart );
+			clearEventBubble(event);
 		}
 
 		api.domElement.addEventListener( 'mousedown', mousedown );
